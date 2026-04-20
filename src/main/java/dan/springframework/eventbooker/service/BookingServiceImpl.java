@@ -127,24 +127,28 @@ public class BookingServiceImpl implements BookingService {
             }
             Event event = existingBooking.getEvent();
 
-            int bookedSeats = event.getBookings()
-                    .stream()
-                    .filter(currentBooking -> !currentBooking.getBookingId().equals(bookingId))
-                    .mapToInt(Booking::getNumberOfSeatsBooked)
-                    .sum();
-
-            int availableSeats = event.getCapacity() - bookedSeats;
-
-            if (requestedSeats > availableSeats) {
-                throw new BookingException("Not enough seats available. Seats remaining: " + availableSeats);
-            }
-
-            existingBooking.setNumberOfSeatsBooked(requestedSeats);
+            seatConfirmation(bookingId, existingBooking, requestedSeats, event);
             existingBooking.setLastUpdatedTime(LocalDateTime.now());
 
             Booking updatedBooking = bookingRepository.save(existingBooking);
             return bookingMapper.bookingToBookingDTO(updatedBooking);
         });
+    }
+
+    private void seatConfirmation(UUID bookingId, Booking existingBooking, int requestedSeats, Event event) {
+        int bookedSeats = event.getBookings()
+                .stream()
+                .filter(currentBooking -> !currentBooking.getBookingId().equals(bookingId))
+                .mapToInt(Booking::getNumberOfSeatsBooked)
+                .sum();
+
+        int availableSeats = event.getCapacity() - bookedSeats;
+
+        if (requestedSeats > availableSeats) {
+            throw new BookingException("Not enough seats available. Seats remaining: " + availableSeats);
+        }
+
+        existingBooking.setNumberOfSeatsBooked(requestedSeats);
     }
 
     @Override
@@ -158,18 +162,7 @@ public class BookingServiceImpl implements BookingService {
                 if (requestedSeats < 1){
                     throw new BookingException("Number of seats must be greater than zero");
                 }
-                int bookedSeats = event.getBookings()
-                        .stream()
-                        .filter(currentBooking -> !currentBooking.getBookingId().equals(bookingId))
-                        .mapToInt(Booking::getNumberOfSeatsBooked)
-                        .sum();
-
-                int availableSeats = event.getCapacity() - bookedSeats;
-
-                if (requestedSeats > availableSeats) {
-                    throw new BookingException("Not enough seats available. Seats remaining: " + availableSeats);
-                }
-                existingBooking.setNumberOfSeatsBooked(requestedSeats);
+                seatConfirmation(bookingId, existingBooking, requestedSeats, event);
             }
             existingBooking.setLastUpdatedTime(LocalDateTime.now());
 
