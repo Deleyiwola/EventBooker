@@ -2,6 +2,7 @@ package dan.springframework.eventbooker.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -32,5 +33,6 @@ public class Booking {
 
     private LocalDateTime lastUpdatedTime;
 
+    @NotNull
     private Integer numberOfSeatsBooked;
 }
