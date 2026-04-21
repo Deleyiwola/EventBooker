@@ -51,5 +51,9 @@ public class Event {
         bookings.remove(booking);
         booking.setEvent(null);
     }
-
+    public int getBookedSeats () {
+        return bookings.stream()
+            .mapToInt(Booking::getNumberOfSeatsBooked)
+            .sum();
+    }
 }

@@ -31,6 +31,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
+    @Transactional
     public BookingDTO createBooking(CreateBookingRequest request) {
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
@@ -43,11 +44,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingException("Number of seats must be greater than zero");
         }
 
-        int bookedSeats = event.getBookings()
-                .stream()
-                .mapToInt(Booking::getNumberOfSeatsBooked)
-                .sum();
-
+        int bookedSeats = event.getBookedSeats();
         int availableSeats = event.getCapacity() - bookedSeats;
 
         if (requestedSeats > availableSeats) {
@@ -107,27 +104,26 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public boolean cancelBooking(UUID bookingId) {
+
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
 
-        User user = booking.getUser();
-        Event event = booking.getEvent();
+        booking.getUser().removeBooking(booking);
+        booking.getEvent().removeBooking(booking);
 
-        user.removeBooking(booking);
-        event.removeBooking(booking);
+        bookingRepository.delete(booking);
+
         return true;
     }
 
     @Override
+    @Transactional
     public Optional<BookingDTO> updateBooking(UUID bookingId, BookingDTO booking) {
-        return bookingRepository.findById(bookingId).map(existingBooking ->{
-            int requestedSeats = booking.getNumberOfSeatsBooked();
-            if (requestedSeats < 1) {
-                throw new BookingException("Number of seats must be greater than zero");
-            }
-            Event event = existingBooking.getEvent();
+        return bookingRepository.findById(bookingId).map(existingBooking -> {
 
-            seatConfirmation(bookingId, existingBooking, requestedSeats, event);
+            int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
+
+            existingBooking.setNumberOfSeatsBooked(requestedSeats);
             existingBooking.setLastUpdatedTime(LocalDateTime.now());
 
             Booking updatedBooking = bookingRepository.save(existingBooking);
@@ -135,35 +131,19 @@ public class BookingServiceImpl implements BookingService {
         });
     }
 
-    private void seatConfirmation(UUID bookingId, Booking existingBooking, int requestedSeats, Event event) {
-        int bookedSeats = event.getBookings()
-                .stream()
-                .filter(currentBooking -> !currentBooking.getBookingId().equals(bookingId))
-                .mapToInt(Booking::getNumberOfSeatsBooked)
-                .sum();
-
-        int availableSeats = event.getCapacity() - bookedSeats;
-
-        if (requestedSeats > availableSeats) {
-            throw new BookingException("Not enough seats available. Seats remaining: " + availableSeats);
-        }
-
-        existingBooking.setNumberOfSeatsBooked(requestedSeats);
-    }
 
     @Override
+    @Transactional
     public Optional<BookingDTO> patchBooking(UUID bookingId, BookingDTO booking) {
-        return bookingRepository.findById(bookingId).map(existingBooking ->{
-            Event event = existingBooking.getEvent();
+        return bookingRepository.findById(bookingId).map(existingBooking -> {
 
-            if (booking.getNumberOfSeatsBooked() != null){
-                int requestedSeats = booking.getNumberOfSeatsBooked();
+            if (booking.getNumberOfSeatsBooked() != null) {
 
-                if (requestedSeats < 1){
-                    throw new BookingException("Number of seats must be greater than zero");
-                }
-                seatConfirmation(bookingId, existingBooking, requestedSeats, event);
+                int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
+
+                existingBooking.setNumberOfSeatsBooked(requestedSeats);
             }
+
             existingBooking.setLastUpdatedTime(LocalDateTime.now());
 
             Booking updatedBooking = bookingRepository.save(existingBooking);
@@ -171,4 +151,26 @@ public class BookingServiceImpl implements BookingService {
             return bookingMapper.bookingToBookingDTO(updatedBooking);
         });
     }
-}
+    private int validateAndGetRequestedSeats(BookingDTO booking, Booking existingBooking) {
+
+        int requestedSeats = booking.getNumberOfSeatsBooked();
+
+        if (requestedSeats < 1) {
+            throw new BookingException("Number of seats must be greater than zero");
+        }
+
+        Event event = existingBooking.getEvent();
+
+        int oldSeats = existingBooking.getNumberOfSeatsBooked();
+        int bookedSeats = event.getBookedSeats();
+
+        int availableSeats = event.getCapacity() - (bookedSeats - oldSeats);
+
+        if (requestedSeats > availableSeats) {
+            throw new BookingException(
+                    "Not enough seats available. Seats remaining: " + availableSeats
+            );
+        }
+
+        return requestedSeats;
+    }}
