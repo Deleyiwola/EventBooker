@@ -1,6 +1,8 @@
 package dan.springframework.eventbooker.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +14,26 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class CustomErrorController {
+
+    @ExceptionHandler(TransactionSystemException.class)
+    ResponseEntity handleJPAViolations(TransactionSystemException exception){
+        ResponseEntity.BodyBuilder responseEntity = ResponseEntity.badRequest();
+
+        if (exception.getCause().getCause() instanceof ConstraintViolationException) {
+            ConstraintViolationException cve = (ConstraintViolationException) exception.getCause().getCause();
+
+            List errors = cve.getConstraintViolations().stream()
+                    .map(constraintViolation -> {
+                        Map<String, String> errorMap = new HashMap<>();
+                        errorMap.put(constraintViolation.getPropertyPath().toString(),
+                                constraintViolation.getMessage());
+                        return errorMap;
+                    }).collect(Collectors.toList());
+            return  responseEntity.body(errors);
+        }
+
+        return responseEntity.build();
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity handleBindsErrors(MethodArgumentNotValidException exception){
