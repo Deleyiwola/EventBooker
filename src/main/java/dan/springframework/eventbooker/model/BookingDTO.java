@@ -16,7 +16,7 @@ import java.util.UUID;
 public class BookingDTO {
     private UUID bookingId;
 
-    private UUID userId;
+    private Long userId;
     private String userName;
 
     private UUID eventId;

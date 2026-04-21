@@ -56,4 +56,7 @@ public class Event {
             .mapToInt(Booking::getNumberOfSeatsBooked)
             .sum();
     }
+    public int getAvailableSeats (){
+        return capacity-getBookedSeats();
+    }
 }

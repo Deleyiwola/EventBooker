@@ -27,6 +27,7 @@ public class EventDTO {
     @NotNull
     private Integer capacity;
     private Integer bookedSeats;
+    private Integer availableSeats;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 

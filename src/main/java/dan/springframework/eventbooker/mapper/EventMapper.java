@@ -9,6 +9,7 @@ import org.mapstruct.*;
 public interface EventMapper {
     // Event->DTO
     @Mapping(target = "bookedSeats", expression = "java(event.getBookedSeats())")
+    @Mapping(target = "availableSeats",expression = "java(event.getAvailableSeats())")
     EventDTO eventToEventDTO(Event event);
 
   // DTO -> Event

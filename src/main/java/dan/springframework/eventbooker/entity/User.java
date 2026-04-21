@@ -1,5 +1,6 @@
 package dan.springframework.eventbooker.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ import java.util.UUID;
 public class User {
    @Id
    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Long id;
 
    @NotNull
    @NotBlank
@@ -35,6 +36,7 @@ public class User {
 
     @Builder.Default
     @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @JsonManagedReference
     private Set<Booking> bookings = new HashSet<>();
 
     public void addBooking(Booking booking) {
