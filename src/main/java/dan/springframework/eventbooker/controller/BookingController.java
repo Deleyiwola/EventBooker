@@ -7,6 +7,7 @@ import dan.springframework.eventbooker.service.CreateBookingRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -50,7 +51,7 @@ public class BookingController {
     }
 
     @PostMapping(BOOKING_URI)
-    public ResponseEntity<BookingDTO> createNewBooking(@RequestBody CreateBookingRequest bookingRequest) {
+    public ResponseEntity<BookingDTO> createNewBooking( @Validated @RequestBody CreateBookingRequest bookingRequest) {
 
         BookingDTO savedBooking = bookingService.createBooking(bookingRequest);
 
@@ -60,14 +61,14 @@ public class BookingController {
     }
 
     @PutMapping(BOOKING_ID_URI)
-    public ResponseEntity<BookingDTO> updateBooking(@PathVariable UUID bookingId, @RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable UUID bookingId, @Validated @RequestBody BookingDTO bookingDTO) {
         return bookingService.updateBooking(bookingId, bookingDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 
     @PatchMapping(BOOKING_ID_URI)
-    public ResponseEntity<BookingDTO> patchBooking(@PathVariable UUID bookingId, @RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<BookingDTO> patchBooking(@PathVariable UUID bookingId, @Validated @RequestBody BookingDTO bookingDTO) {
         return bookingService.patchBooking(bookingId, bookingDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));

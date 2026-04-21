@@ -6,6 +6,7 @@ import dan.springframework.eventbooker.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping(USER_URI)
-    public ResponseEntity<UserDTO> createNewUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> createNewUser(@Validated @RequestBody UserDTO userDTO) {
 
         UserDTO savedUser = userService.createUser(userDTO);
 
@@ -46,14 +47,14 @@ public class UserController {
     }
 
     @PutMapping(USER_ID_URI)
-    public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @Validated @RequestBody UserDTO userDTO) {
         return userService.updateUser(userId, userDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @PatchMapping(USER_ID_URI)
-    public ResponseEntity<UserDTO> patchUser(@PathVariable UUID userId, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> patchUser(@PathVariable UUID userId, @Validated @RequestBody UserDTO userDTO) {
         return userService.patchUser(userId, userDTO)
                 .map(ResponseEntity::ok)
 

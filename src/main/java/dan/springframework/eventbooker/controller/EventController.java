@@ -6,6 +6,7 @@ import dan.springframework.eventbooker.service.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -35,7 +36,7 @@ public class EventController {
     }
 
     @PostMapping(EVENT_URI)
-    public ResponseEntity<EventDTO> createNewEvent(@RequestBody EventDTO eventDTO) {
+    public ResponseEntity<EventDTO> createNewEvent(@Validated @RequestBody EventDTO eventDTO) {
 
         EventDTO savedEvent = eventService.createEvent(eventDTO);
 
@@ -45,14 +46,14 @@ public class EventController {
     }
 
     @PutMapping(EVENT_ID_URI)
-    public ResponseEntity<EventDTO> updateEvent(@PathVariable UUID eventId, @RequestBody EventDTO eventDTO) {
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable UUID eventId, @Validated @RequestBody EventDTO eventDTO) {
         return eventService.updateEvent(eventId, eventDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
     }
 
     @PatchMapping(EVENT_ID_URI)
-    public ResponseEntity<EventDTO> patchEvent(@PathVariable UUID eventId, @RequestBody EventDTO eventDTO) {
+    public ResponseEntity<EventDTO> patchEvent(@PathVariable UUID eventId, @Validated @RequestBody EventDTO eventDTO) {
         return eventService.patchEvent(eventId, eventDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
