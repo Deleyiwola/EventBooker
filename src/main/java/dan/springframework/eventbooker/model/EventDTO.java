@@ -18,8 +18,8 @@ public class EventDTO {
     private UUID id;
     private Integer version;
     private String eventName;
-    private int capacity;
-    private int bookedSeats;
+    private Integer capacity;
+    private Integer bookedSeats;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
