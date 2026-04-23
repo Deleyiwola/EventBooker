@@ -17,6 +17,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Transactional
 public class BootstrapData implements CommandLineRunner {
 
     private final UserRepository userRepository;
