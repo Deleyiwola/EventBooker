@@ -15,7 +15,7 @@ public interface BookingService {
 
     List<BookingDTO> getBookings();
 
-    List<BookingDTO> getBookingsByUserId(UUID userId);
+    List<BookingDTO> getBookingsByUserId(Long userId);
 
     List<BookingDTO> getBookingsByEventId(UUID eventId);
 

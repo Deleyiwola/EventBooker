@@ -1,5 +1,6 @@
 package dan.springframework.eventbooker.model;
 
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,7 @@ public class BookingDTO {
     private UUID eventId;
     private String eventName;
 
-    @NotNull
+//    @NotNull
     private Integer numberOfSeatsBooked;
 
     private LocalDateTime timeBooked;

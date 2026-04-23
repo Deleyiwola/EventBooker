@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(UUID id) {
+    public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
         return userMapper.userToUserDTO(user);
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> updateUser(UUID userId, UserDTO user) {
+    public Optional<UserDTO> updateUser(Long userId, UserDTO user) {
         AtomicReference<Optional<UserDTO>> atomicReference = new AtomicReference<>();
 
         userRepository.findById(userId).ifPresentOrElse(existingUser -> {
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(UUID id) {
+    public boolean deleteUser(Long id) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
     @Override
-    public Optional<UserDTO> patchUser(UUID userId, UserDTO user) {
+    public Optional<UserDTO> patchUser(Long userId, UserDTO user) {
         AtomicReference<Optional<UserDTO>> atomicReference = new AtomicReference<>();
 
         userRepository.findById(userId).ifPresentOrElse(existingUser -> {
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<BookingDTO> getUserBookings(UUID userId) {
+    public List<BookingDTO> getUserBookings(Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));

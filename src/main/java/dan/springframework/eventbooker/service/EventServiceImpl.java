@@ -44,6 +44,9 @@ public class EventServiceImpl implements EventService {
     public EventDTO createEvent(EventDTO eventDTO) {
         Event event = eventMapper.eventDTOToEvent(eventDTO);
         Event savedEvent = eventRepository.save(event);
+        if (savedEvent.getCapacity()==null) {
+            throw new RuntimeException("Capacity Must not be null");
+        }
         return eventMapper.eventToEventDTO(savedEvent);
     }
 
@@ -82,7 +85,7 @@ public class EventServiceImpl implements EventService {
             if (StringUtils.hasText(event.getEventName())) {
                 existingEvent.setEventName(event.getEventName());
             }
-            if (event.getCapacity() > 0) {
+            if (event.getCapacity() != null) {
                 existingEvent.setCapacity(event.getCapacity());
             }
             if (event.getStartTime() != null) {

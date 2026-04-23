@@ -82,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDTO> getBookingsByUserId(UUID userId) {
+    public List<BookingDTO> getBookingsByUserId(Long userId) {
         return bookingRepository.findAll()
                 .stream()
                 .filter(booking -> booking.getUser()
@@ -122,7 +122,6 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findById(bookingId).map(existingBooking -> {
 
             int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
-
             existingBooking.setNumberOfSeatsBooked(requestedSeats);
             existingBooking.setLastUpdatedTime(LocalDateTime.now());
 

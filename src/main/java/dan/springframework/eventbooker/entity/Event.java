@@ -27,12 +27,11 @@ public class Event {
     @Version
     private Integer version;
 
-    @NotNull
-    @NotBlank
-    @Size(max = 50)
+//    @NotNull
+//    @NotBlank
+//    @Size(max = 50)
     private String eventName;
 
-    @NotNull
     private Integer capacity;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

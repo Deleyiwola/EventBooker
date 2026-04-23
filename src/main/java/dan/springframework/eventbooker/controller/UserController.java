@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping(USER_ID_URI)
-    public UserDTO getUserById(@PathVariable UUID userId) {
+    public UserDTO getUserById(@PathVariable Long userId) {
 
         log.info("Getting user with userId: {}", userId);
 
@@ -47,14 +47,14 @@ public class UserController {
     }
 
     @PutMapping(USER_ID_URI)
-    public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @Validated @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @Validated @RequestBody UserDTO userDTO) {
         return userService.updateUser(userId, userDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @PatchMapping(USER_ID_URI)
-    public ResponseEntity<UserDTO> patchUser(@PathVariable UUID userId, @Validated @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> patchUser(@PathVariable Long userId, @Validated @RequestBody UserDTO userDTO) {
         return userService.patchUser(userId, userDTO)
                 .map(ResponseEntity::ok)
 
@@ -62,7 +62,7 @@ public class UserController {
     }
 
     @DeleteMapping(USER_ID_URI)
-    public  ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
+    public  ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
 
         return ResponseEntity.noContent().build();

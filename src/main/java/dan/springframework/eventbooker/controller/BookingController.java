@@ -39,7 +39,7 @@ public class BookingController {
     }
 
     @GetMapping(BOOKING_USER_ID_URI)
-    public List<BookingDTO> getBookingByUserId(@PathVariable UUID userId) {
+    public List<BookingDTO> getBookingByUserId(@PathVariable Long userId) {
         log.info("Getting booking with userId {}", userId);
         return bookingService.getBookingsByUserId(userId);
     }

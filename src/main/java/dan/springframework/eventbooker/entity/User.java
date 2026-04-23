@@ -22,16 +22,17 @@ public class User {
    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-   @NotNull
-   @NotBlank
+
+    //   @NotNull
+//   @NotBlank
     private String phoneNumber;
 
-    @NotNull
-    @NotBlank
+//    @NotNull
+//    @NotBlank
     private String name;
 
-    @NotNull
-    @NotBlank
+//    @NotNull
+//    @NotBlank
     private String email;
 
     @Builder.Default

@@ -20,11 +20,10 @@ public class EventDTO {
     private UUID id;
     private Integer version;
 
-    @NotNull
-    @NotBlank
+//    @NotNull
+//    @NotBlank
     private String eventName;
 
-    @NotNull
     private Integer capacity;
     private Integer bookedSeats;
     private Integer availableSeats;

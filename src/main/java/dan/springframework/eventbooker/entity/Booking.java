@@ -33,6 +33,6 @@ public class Booking {
 
     private LocalDateTime lastUpdatedTime;
 
-    @NotNull
+//    @NotNull
     private Integer numberOfSeatsBooked;
 }

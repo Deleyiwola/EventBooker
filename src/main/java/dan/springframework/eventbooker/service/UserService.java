@@ -13,15 +13,15 @@ public interface UserService {
 
     List<UserDTO> listUsers();
 
-    UserDTO getUserById(UUID id);
+    UserDTO getUserById(Long id);
 
     UserDTO createUser(UserDTO user);
 
-    Optional<UserDTO> updateUser(UUID userId, UserDTO user);
+    Optional<UserDTO> updateUser(Long userId, UserDTO user);
 
-    boolean deleteUser(UUID id);
+    boolean deleteUser(Long id);
 
-    Optional<UserDTO> patchUser(UUID userId, UserDTO user);
+    Optional<UserDTO> patchUser(Long userId, UserDTO user);
 
-    List<BookingDTO> getUserBookings(UUID userId);
+    List<BookingDTO> getUserBookings(Long userId);
 }
