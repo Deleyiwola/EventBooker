@@ -19,7 +19,7 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
    @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
@@ -33,6 +33,7 @@ public class User {
 
 //    @NotNull
 //    @NotBlank
+    @Column(length = 255)
     private String email;
 
     @Builder.Default

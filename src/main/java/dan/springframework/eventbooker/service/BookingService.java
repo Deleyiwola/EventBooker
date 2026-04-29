@@ -11,19 +11,19 @@ import java.util.UUID;
 public interface BookingService {
     BookingDTO createBooking(CreateBookingRequest request);
 
-    BookingDTO getBookingById(UUID id);
+    BookingDTO getBookingById(Long id);
 
     List<BookingDTO> getBookings();
 
     List<BookingDTO> getBookingsByUserId(Long userId);
 
-    List<BookingDTO> getBookingsByEventId(UUID eventId);
+    List<BookingDTO> getBookingsByEventId(Long eventId);
 
-    boolean cancelBooking(UUID bookingId);
+    boolean cancelBooking(Long bookingId);
 
-    Optional<BookingDTO> updateBooking(UUID bookingId,BookingDTO booking);
+    Optional<BookingDTO> updateBooking(Long bookingId,BookingDTO booking);
 
-    Optional<BookingDTO> patchBooking(UUID bookingId, BookingDTO booking);
+    Optional<BookingDTO> patchBooking(Long bookingId, BookingDTO booking);
 
 
 

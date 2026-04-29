@@ -17,7 +17,7 @@ import java.util.UUID;
 @Builder
 @Data
 public class EventDTO {
-    private UUID id;
+    private Long id;
     private Integer version;
 
 //    @NotNull

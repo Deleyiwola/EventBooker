@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class EventController {
     }
 
     @GetMapping(EVENT_ID_URI)
-    public EventDTO getEventById(@PathVariable UUID eventId) {
+    public EventDTO getEventById(@PathVariable Long eventId) {
 
         log.info("Getting event with id {}", eventId);
 
@@ -46,21 +45,21 @@ public class EventController {
     }
 
     @PutMapping(EVENT_ID_URI)
-    public ResponseEntity<EventDTO> updateEvent(@PathVariable UUID eventId, @Validated @RequestBody EventDTO eventDTO) {
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable Long eventId, @Validated @RequestBody EventDTO eventDTO) {
         return eventService.updateEvent(eventId, eventDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
     }
 
     @PatchMapping(EVENT_ID_URI)
-    public ResponseEntity<EventDTO> patchEvent(@PathVariable UUID eventId, @Validated @RequestBody EventDTO eventDTO) {
+    public ResponseEntity<EventDTO> patchEvent(@PathVariable Long eventId, @Validated @RequestBody EventDTO eventDTO) {
         return eventService.patchEvent(eventId, eventDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
     }
 
     @DeleteMapping(EVENT_ID_URI)
-    public ResponseEntity<Void> deleteEvent(@PathVariable UUID eventId) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
         eventService.deleteEvent(eventId);
 
         return ResponseEntity.noContent().build();

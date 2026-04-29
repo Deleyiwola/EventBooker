@@ -31,7 +31,7 @@ public class BookingController {
     }
 
     @GetMapping(BOOKING_ID_URI)
-    public BookingDTO getBookingById(@PathVariable UUID bookingId) {
+    public BookingDTO getBookingById(@PathVariable Long bookingId) {
 
         log.info("Getting booking with id {}", bookingId);
 
@@ -45,7 +45,7 @@ public class BookingController {
     }
 
     @GetMapping(BOOKING_EVENT_ID_URI)
-    public List<BookingDTO> getBookingsByEventId(@PathVariable UUID eventId) {
+    public List<BookingDTO> getBookingsByEventId(@PathVariable Long eventId) {
         log.info("Getting booking with eventId {}", eventId);
         return bookingService.getBookingsByEventId(eventId);
     }
@@ -61,21 +61,21 @@ public class BookingController {
     }
 
     @PutMapping(BOOKING_ID_URI)
-    public ResponseEntity<BookingDTO> updateBooking(@PathVariable UUID bookingId, @Validated @RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO) {
         return bookingService.updateBooking(bookingId, bookingDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 
     @PatchMapping(BOOKING_ID_URI)
-    public ResponseEntity<BookingDTO> patchBooking(@PathVariable UUID bookingId, @Validated @RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<BookingDTO> patchBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO) {
         return bookingService.patchBooking(bookingId, bookingDTO)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 
     @DeleteMapping(BOOKING_ID_URI)
-    public ResponseEntity<Void> deleteBooking(@PathVariable UUID bookingId) {
+    public ResponseEntity<Void> deleteBooking(@PathVariable Long bookingId) {
         bookingService.cancelBooking(bookingId);
         return ResponseEntity.noContent().build();
     }

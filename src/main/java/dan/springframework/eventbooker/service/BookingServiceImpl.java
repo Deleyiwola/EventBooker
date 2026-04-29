@@ -67,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDTO getBookingById(UUID id) {
+    public BookingDTO getBookingById(Long id) {
         Booking booking =  bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
         return bookingMapper.bookingToBookingDTO(booking);
@@ -92,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDTO> getBookingsByEventId(UUID eventId) {
+    public List<BookingDTO> getBookingsByEventId(Long eventId) {
         return bookingRepository.findAll()
                 .stream()
                 .filter(booking -> booking.getEvent()
@@ -103,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public boolean cancelBooking(UUID bookingId) {
+    public boolean cancelBooking(Long bookingId) {
 
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
@@ -118,7 +118,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Optional<BookingDTO> updateBooking(UUID bookingId, BookingDTO booking) {
+    public Optional<BookingDTO> updateBooking(Long bookingId, BookingDTO booking) {
         return bookingRepository.findById(bookingId).map(existingBooking -> {
 
             int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
@@ -133,7 +133,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Optional<BookingDTO> patchBooking(UUID bookingId, BookingDTO booking) {
+    public Optional<BookingDTO> patchBooking(Long bookingId, BookingDTO booking) {
         return bookingRepository.findById(bookingId).map(existingBooking -> {
 
             if (booking.getNumberOfSeatsBooked() != null) {

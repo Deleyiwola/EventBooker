@@ -16,8 +16,8 @@ import java.util.UUID;
 @Builder
 public class Booking {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID bookingId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long bookingId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
