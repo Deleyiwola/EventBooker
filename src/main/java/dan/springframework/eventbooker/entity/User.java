@@ -27,6 +27,9 @@ public class User {
 //   @NotBlank
     private String phoneNumber;
 
+    @Column(length = 255)
+    private String userName;
+
 //    @NotNull
 //    @NotBlank
     private String name;
