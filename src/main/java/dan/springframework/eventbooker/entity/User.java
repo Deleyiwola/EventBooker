@@ -33,7 +33,7 @@ public class User {
 
 //    @NotNull
 //    @NotBlank
-    @Column(length = 255)
+
     private String email;
 
     @Builder.Default
