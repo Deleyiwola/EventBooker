@@ -2,13 +2,10 @@ package dan.springframework.eventbooker.service;
 
 import dan.springframework.eventbooker.model.BookingDTO;
 import dan.springframework.eventbooker.model.UserDTO;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-@Service
 public interface UserService {
 
     List<UserDTO> listUsers();

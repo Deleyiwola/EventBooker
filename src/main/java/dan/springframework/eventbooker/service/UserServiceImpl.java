@@ -1,7 +1,7 @@
 package dan.springframework.eventbooker.service;
 
-import dan.springframework.eventbooker.exception.NotFoundException;
 import dan.springframework.eventbooker.entity.User;
+import dan.springframework.eventbooker.exception.NotFoundException;
 import dan.springframework.eventbooker.mapper.BookingMapper;
 import dan.springframework.eventbooker.mapper.UserMapper;
 import dan.springframework.eventbooker.model.BookingDTO;
@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
