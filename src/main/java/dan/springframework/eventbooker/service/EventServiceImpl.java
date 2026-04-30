@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -34,7 +33,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDTO getEventById(UUID id) {
+    public EventDTO getEventById(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
         return eventMapper.eventToEventDTO(event);
@@ -51,7 +50,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Optional<EventDTO> updateEvent(UUID eventId, EventDTO event) {
+    public Optional<EventDTO> updateEvent(Long eventId, EventDTO event) {
         AtomicReference<Optional<EventDTO>> atomicReference = new AtomicReference<>();
 
         eventRepository.findById(eventId).ifPresentOrElse(existingEvent -> {
@@ -68,7 +67,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public boolean deleteEvent(UUID eventId) {
+    public boolean deleteEvent(Long eventId) {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
@@ -78,7 +77,7 @@ public class EventServiceImpl implements EventService {
         return true;
     }
     @Override
-    public Optional<EventDTO> patchEvent(UUID eventId, EventDTO event) {
+    public Optional<EventDTO> patchEvent(Long eventId, EventDTO event) {
         AtomicReference<Optional<EventDTO>> atomicReference = new AtomicReference<>();
 
         eventRepository.findById(eventId).ifPresentOrElse(existingEvent -> {
@@ -103,7 +102,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<BookingDTO> getEventBookings(UUID eventId) {
+    public List<BookingDTO> getEventBookings(Long eventId) {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));

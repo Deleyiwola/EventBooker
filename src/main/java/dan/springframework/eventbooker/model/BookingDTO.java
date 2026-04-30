@@ -15,12 +15,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class BookingDTO {
-    private UUID bookingId;
+    private Long bookingId;
 
     private Long userId;
     private String userName;
 
-    private UUID eventId;
+    private Long eventId;
     private String eventName;
 
 //    @NotNull
