@@ -1,12 +1,10 @@
 package dan.springframework.eventbooker.service;
 
 import dan.springframework.eventbooker.model.BookingDTO;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public interface BookingService {
     BookingDTO createBooking(CreateBookingRequest request);
 

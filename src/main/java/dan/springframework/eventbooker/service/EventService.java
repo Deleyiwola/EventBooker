@@ -2,12 +2,10 @@ package dan.springframework.eventbooker.service;
 
 import dan.springframework.eventbooker.model.BookingDTO;
 import dan.springframework.eventbooker.model.EventDTO;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public interface EventService {
 
     List<EventDTO> listEvents();
