@@ -1,5 +1,6 @@
 package dan.springframework.eventbooker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -34,6 +35,9 @@ public class User {
 //    @NotNull
 //    @NotBlank
     private String email;
+
+    @JsonIgnore
+    private String password;
 
     @Builder.Default
     @OneToMany(mappedBy = "user", orphanRemoval = true)
