@@ -2,7 +2,8 @@ package dan.springframework.eventbooker.mapper;
 
 import dan.springframework.eventbooker.entity.Event;
 import dan.springframework.eventbooker.model.EventDTO;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper
 

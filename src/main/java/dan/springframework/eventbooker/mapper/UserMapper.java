@@ -2,7 +2,8 @@ package dan.springframework.eventbooker.mapper;
 
 import dan.springframework.eventbooker.entity.User;
 import dan.springframework.eventbooker.model.UserDTO;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
