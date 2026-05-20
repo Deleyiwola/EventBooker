@@ -1,7 +1,7 @@
 package dan.springframework.eventbooker.controller;
 
-import dan.springframework.eventbooker.entity.User;
 import dan.springframework.eventbooker.model.LoginRequest;
+import dan.springframework.eventbooker.model.RegisterUser;
 import dan.springframework.eventbooker.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +19,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public Map<String, String> register(@RequestBody User user) {
-        String token = authService.register(user);
+    public Map<String, String> register(@RequestBody RegisterUser registerUser) {
+        String token = authService.register(registerUser);
 
         return Map.of("token", token);
     }
