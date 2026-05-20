@@ -30,7 +30,7 @@ public class AuthService {
     public String login(String email, String password) {
     User user = userRepository.findByEmail(email)
             .orElseThrow(()-> new NotFoundException("User not found"));
-
+        System.out.println(user.getPassword());
     if (!passwordEncoder.matches(password, user.getPassword())) {
         throw new RuntimeException("Invalid Credentials");
     }

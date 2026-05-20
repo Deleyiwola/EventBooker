@@ -38,7 +38,7 @@ public class User {
 
     @Builder.Default
     @OneToMany(mappedBy = "user", orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("user-bookings")
     private Set<Booking> bookings = new HashSet<>();
 
     public void addBooking(Booking booking) {

@@ -20,12 +20,12 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonBackReference("user-bookings")
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    @JsonBackReference
+    @JsonBackReference("event-bookings")
     private Event event;
 
     private LocalDateTime timeBooked;

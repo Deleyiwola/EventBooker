@@ -34,7 +34,7 @@ public class Event {
 
     @Builder.Default
     @OneToMany(mappedBy = "event", orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("event-bookings")
     private Set<Booking> bookings = new HashSet<>();
 
     public void addBooking(Booking booking){
