@@ -12,6 +12,7 @@ import dan.springframework.eventbooker.repository.EventRepository;
 import dan.springframework.eventbooker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -66,9 +67,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDTO getBookingById(Long id) {
+    public BookingDTO getBookingById(Long id, String email) {
         Booking booking =  bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
+
+        if (!booking.getUser().getEmail().equals(email)) {
+            throw new AccessDeniedException("User not allowed to veiw this booking");
+        }
         return bookingMapper.bookingToBookingDTO(booking);
     }
 
@@ -97,10 +102,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public boolean cancelBooking(Long bookingId) {
+    public boolean cancelBooking(Long bookingId, String email) {
 
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
+
+        if (!booking.getUser().getEmail().equals(email)) {
+            throw new AccessDeniedException("You are not allowed to make changes to this booking");
+        }
 
         booking.getUser().removeBooking(booking);
         booking.getEvent().removeBooking(booking);

@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface BookingService {
     BookingDTO createBooking(CreateBookingRequest request, String email);
 
-    BookingDTO getBookingById(Long id);
+    BookingDTO getBookingById(Long id, String email);
 
     List<BookingDTO> getBookings();
 
@@ -16,7 +16,7 @@ public interface BookingService {
 
     List<BookingDTO> getBookingsByEventId(Long eventId);
 
-    boolean cancelBooking(Long bookingId);
+    boolean cancelBooking(Long bookingId, String email);
 
     Optional<BookingDTO> updateBooking(Long bookingId,BookingDTO booking);
 

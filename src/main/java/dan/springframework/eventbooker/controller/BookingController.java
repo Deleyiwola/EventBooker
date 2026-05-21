@@ -20,7 +20,6 @@ import java.util.List;
 public class BookingController {
     public static final String BOOKING_URI = "/bookingApi/v1/bookings";
     public static final String BOOKING_ID_URI = "/bookingApi/v1/bookings/{bookingId}";
-    public static final String BOOKING_USER_ID_URI = "/bookingApi/v1/bookings/users/{userId}";
     public static final String BOOKING_EVENT_ID_URI = "/bookingApi/v1/bookings/events/{eventId}";
     public static final String BOOKING_MY_BOOKING_URI = "/bookingApi/v1/bookings/my-bookings";
 
@@ -32,11 +31,11 @@ public class BookingController {
     }
 
     @GetMapping(BOOKING_ID_URI)
-    public BookingDTO getBookingById(@PathVariable Long bookingId) {
+    public BookingDTO getBookingById(@PathVariable Long bookingId, Authentication authentication) {
 
         log.info("Getting booking with id {}", bookingId);
 
-        return bookingService.getBookingById(bookingId);
+        return bookingService.getBookingById(bookingId, authentication.getName());
     }
 
     @GetMapping(BOOKING_MY_BOOKING_URI)
@@ -77,8 +76,8 @@ public class BookingController {
     }
 
     @DeleteMapping(BOOKING_ID_URI)
-    public ResponseEntity<Void> deleteBooking(@PathVariable Long bookingId) {
-        bookingService.cancelBooking(bookingId);
+    public ResponseEntity<Void> deleteBooking(@PathVariable Long bookingId, Authentication authentication) {
+        bookingService.cancelBooking(bookingId, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 }
