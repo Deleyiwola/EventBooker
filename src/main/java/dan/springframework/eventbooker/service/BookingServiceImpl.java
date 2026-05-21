@@ -82,20 +82,16 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDTO> getBookingsByUserId(Long userId) {
-        return bookingRepository.findAll()
+        return bookingRepository.findByUser_Id(userId)
                 .stream()
-                .filter(booking -> booking.getUser()
-                        .getId().equals(userId))
                 .map(bookingMapper::bookingToBookingDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<BookingDTO> getBookingsByEventId(Long eventId) {
-        return bookingRepository.findAll()
+        return bookingRepository.findByEvent_Id(eventId)
                 .stream()
-                .filter(booking -> booking.getEvent()
-                        .getId().equals(eventId))
                 .map(bookingMapper::bookingToBookingDTO)
                 .collect(Collectors.toList());
     }
