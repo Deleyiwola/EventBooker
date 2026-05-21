@@ -2,7 +2,9 @@ package dan.springframework.eventbooker.service;
 
 import dan.springframework.eventbooker.entity.User;
 import dan.springframework.eventbooker.exception.NotFoundException;
+import dan.springframework.eventbooker.mapper.UserMapper;
 import dan.springframework.eventbooker.model.RegisterUser;
+import dan.springframework.eventbooker.model.UserDTO;
 import dan.springframework.eventbooker.repository.UserRepository;
 import dan.springframework.eventbooker.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserMapper userMapper;
 
     public String register(RegisterUser registerUser) {
         if (!registerUser.getPassword().equals(registerUser.getConfirmPassword())) {
@@ -39,7 +42,6 @@ public class AuthService {
 
     }
 
-
     public String login(String email, String password) {
     User user = userRepository.findByEmail(email)
             .orElseThrow(()-> new NotFoundException("User not found"));
@@ -50,4 +52,10 @@ public class AuthService {
     return jwtService.generateToken(user.getEmail());
     }
 
+    public UserDTO getProfile(String email) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(()-> new NotFoundException("User not found"));
+
+        return userMapper.userToUserDTO(user);
+    }
 }

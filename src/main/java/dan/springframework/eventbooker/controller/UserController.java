@@ -22,11 +22,13 @@ public class UserController {
 
     private final UserService userService;
 
+//    Earmarked for admin role
     @GetMapping(USER_URI)
     public List<UserDTO> listUsers()     {
         return userService.listUsers();
     }
 
+//    Ear marked for admin role but i'll make a proflie endpoint
     @GetMapping(USER_ID_URI)
     public UserDTO getUserById(@PathVariable Long userId) {
 
@@ -34,7 +36,9 @@ public class UserController {
 
         return userService.getUserById(userId);
     }
-
+/*
+    Not sure if i should remove this,
+     because the application can already create a new user from the AuthController */
     @PostMapping(USER_URI)
     public ResponseEntity<UserDTO> createNewUser(@Validated @RequestBody UserDTO userDTO) {
 
@@ -45,6 +49,7 @@ public class UserController {
                 .body(savedUser);
     }
 
+//Normal user but add security
     @PutMapping(USER_ID_URI)
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @Validated @RequestBody UserDTO userDTO) {
         return userService.updateUser(userId, userDTO)
@@ -52,6 +57,7 @@ public class UserController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+//Normal user but add security
     @PatchMapping(USER_ID_URI)
     public ResponseEntity<UserDTO> patchUser(@PathVariable Long userId, @Validated @RequestBody UserDTO userDTO) {
         return userService.patchUser(userId, userDTO)
@@ -60,6 +66,7 @@ public class UserController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+// Ear marked for admin role
     @DeleteMapping(USER_ID_URI)
     public  ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
