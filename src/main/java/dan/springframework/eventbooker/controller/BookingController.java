@@ -7,6 +7,7 @@ import dan.springframework.eventbooker.service.CreateBookingRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class BookingController {
     public static final String BOOKING_ID_URI = "/bookingApi/v1/bookings/{bookingId}";
     public static final String BOOKING_USER_ID_URI = "/bookingApi/v1/bookings/users/{userId}";
     public static final String BOOKING_EVENT_ID_URI = "/bookingApi/v1/bookings/events/{eventId}";
+    public static final String BOOKING_MY_BOOKING_URI = "/bookingApi/v1/bookings/my-bookings";
 
     private final BookingService bookingService;
 
@@ -37,10 +39,10 @@ public class BookingController {
         return bookingService.getBookingById(bookingId);
     }
 
-    @GetMapping(BOOKING_USER_ID_URI)
-    public List<BookingDTO> getBookingByUserId(@PathVariable Long userId) {
-        log.info("Getting booking with userId {}", userId);
-        return bookingService.getBookingsByUserId(userId);
+    @GetMapping(BOOKING_MY_BOOKING_URI)
+    public List<BookingDTO> getBookingsByUserEmail(Authentication authentication) {
+        log.info("Getting booking with user {}",  authentication.getName());
+        return bookingService.getBookingsByUserEmail(authentication.getName());
     }
 
     @GetMapping(BOOKING_EVENT_ID_URI)
@@ -50,9 +52,10 @@ public class BookingController {
     }
 
     @PostMapping(BOOKING_URI)
-    public ResponseEntity<BookingDTO> createNewBooking( @Validated @RequestBody CreateBookingRequest bookingRequest) {
+    public ResponseEntity<BookingDTO> createNewBooking( @Validated @RequestBody CreateBookingRequest bookingRequest,
+                                                        Authentication authentication) {
 
-        BookingDTO savedBooking = bookingService.createBooking(bookingRequest);
+        BookingDTO savedBooking = bookingService.createBooking(bookingRequest, authentication.getName());
 
         return ResponseEntity
                 .created(URI.create(BOOKING_URI + "/" + savedBooking.getBookingId()))

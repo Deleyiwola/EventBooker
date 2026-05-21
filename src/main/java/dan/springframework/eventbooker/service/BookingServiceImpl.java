@@ -31,8 +31,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDTO createBooking(CreateBookingRequest request) {
-        User user = userRepository.findById(request.userId())
+    public BookingDTO createBooking(CreateBookingRequest request, String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         Event event = eventRepository.findById(request.eventId())
@@ -80,9 +80,8 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<BookingDTO> getBookingsByUserId(Long userId) {
-        return bookingRepository.findByUser_Id(userId)
+    public List<BookingDTO> getBookingsByUserEmail(String email) {
+        return bookingRepository.findByUser_Email(email)
                 .stream()
                 .map(bookingMapper::bookingToBookingDTO)
                 .collect(Collectors.toList());

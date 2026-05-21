@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingService {
-    BookingDTO createBooking(CreateBookingRequest request);
+    BookingDTO createBooking(CreateBookingRequest request, String email);
 
     BookingDTO getBookingById(Long id);
 
     List<BookingDTO> getBookings();
 
-    List<BookingDTO> getBookingsByUserId(Long userId);
+    List<BookingDTO> getBookingsByUserEmail(String email);
 
     List<BookingDTO> getBookingsByEventId(Long eventId);
 

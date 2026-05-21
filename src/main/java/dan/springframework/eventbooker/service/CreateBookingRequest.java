@@ -1,5 +1,5 @@
 package dan.springframework.eventbooker.service;
 
-public record CreateBookingRequest(Long userId, Long eventId, Integer numberOfSeatsBooked) {
+public record CreateBookingRequest(Long eventId, Integer numberOfSeatsBooked) {
 
 }
