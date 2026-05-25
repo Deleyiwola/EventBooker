@@ -23,7 +23,7 @@ public class UserController {
 
     private final UserService userService;
 
-//    Earmarked for admin role
+    //    Earmarked for admin role
     @GetMapping(USER_URI)
     public List<UserDTO> listUsers()     {
         return userService.listUsers();
@@ -34,7 +34,7 @@ public class UserController {
         return userService.getProfile(authentication.getName());
     }
 
-//    Ear marked for admin role but i'll make a proflie endpoint
+    //    Ear marked for admin role but i'll make a proflie endpoint
     @GetMapping(USER_ID_URI)
     public UserDTO getUserById(@PathVariable Long userId) {
 
@@ -43,17 +43,17 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
-//Normal user but add security
-    @PutMapping(USER_URI+ "/update" + MY_PROFILE_URI)
+    //Normal user but add security
+    @PutMapping(USER_URI+MY_PROFILE_URI)
     public ResponseEntity<UserDTO> updateUser( @Validated @RequestBody UserDTO userDTO,
-                                              Authentication authentication) {
+                                               Authentication authentication) {
         return userService.updateUser(userDTO, authentication.getName())
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
-//Normal user but add security
-    @PatchMapping(USER_URI + "/edit" + MY_PROFILE_URI)
+    //Normal user but add security
+    @PatchMapping(USER_URI+MY_PROFILE_URI)
     public ResponseEntity<UserDTO> patchUser(@Validated @RequestBody UserDTO userDTO, Authentication authentication) {
         return userService.patchUser(userDTO, authentication.getName())
                 .map(ResponseEntity::ok)
@@ -61,9 +61,9 @@ public class UserController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
-// Ear marked for admin role
-    @DeleteMapping(USER_ID_URI)
-    public  ResponseEntity<Void> deleteUser(@PathVariable Long userId, Authentication authentication) {
+    // Ear marked for admin role
+    @DeleteMapping(USER_URI+MY_PROFILE_URI)
+    public  ResponseEntity<Void> deleteUser(Authentication authentication) {
         userService.deleteUser(authentication.getName());
 
         return ResponseEntity.noContent().build();
