@@ -24,6 +24,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final BookingMapper bookingMapper;
 
+//    Ear marked for admin role
     @Override
     public List<EventDTO> listEvents() {
         return eventRepository.findAll()
@@ -32,6 +33,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+//    Earmarked for admin and Event organizer role
     @Override
     public EventDTO getEventById(Long id) {
         Event event = eventRepository.findById(id)
@@ -39,6 +41,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventDTO(event);
     }
 
+//    Earmarked for admin and event organiser role
     @Override
     public EventDTO createEvent(EventDTO eventDTO) {
         Event event = eventMapper.eventDTOToEvent(eventDTO);
@@ -49,6 +52,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventDTO(savedEvent);
     }
 
+//    Earmarked for admin and event organizer role
     @Override
     public Optional<EventDTO> updateEvent(Long eventId, EventDTO event) {
         AtomicReference<Optional<EventDTO>> atomicReference = new AtomicReference<>();
@@ -66,6 +70,7 @@ public class EventServiceImpl implements EventService {
         return atomicReference.get();
     }
 
+//    Earmarked for admin and event organiser role
     @Override
     public boolean deleteEvent(Long eventId) {
 
@@ -76,6 +81,8 @@ public class EventServiceImpl implements EventService {
 
         return true;
     }
+
+//    Earmarked for admin and event organiser role
     @Override
     public Optional<EventDTO> patchEvent(Long eventId, EventDTO event) {
         AtomicReference<Optional<EventDTO>> atomicReference = new AtomicReference<>();
@@ -101,6 +108,7 @@ public class EventServiceImpl implements EventService {
         return atomicReference.get();
     }
 
+//    Earmarked for admin and event organiser role
     @Override
     public List<BookingDTO> getEventBookings(Long eventId) {
 
