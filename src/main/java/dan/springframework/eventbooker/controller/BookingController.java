@@ -62,15 +62,17 @@ public class BookingController {
     }
 
     @PutMapping(BOOKING_ID_URI)
-    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO) {
-        return bookingService.updateBooking(bookingId, bookingDTO)
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO,
+                                                    Authentication authentication) {
+        return bookingService.updateBooking(bookingId, bookingDTO, authentication.getName())
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 
     @PatchMapping(BOOKING_ID_URI)
-    public ResponseEntity<BookingDTO> patchBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO) {
-        return bookingService.patchBooking(bookingId, bookingDTO)
+    public ResponseEntity<BookingDTO> patchBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO,
+                                                   Authentication authentication) {
+        return bookingService.patchBooking(bookingId, bookingDTO, authentication.getName())
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
     }

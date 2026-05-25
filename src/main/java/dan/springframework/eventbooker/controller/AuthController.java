@@ -2,11 +2,12 @@ package dan.springframework.eventbooker.controller;
 
 import dan.springframework.eventbooker.model.LoginRequest;
 import dan.springframework.eventbooker.model.RegisterUser;
-import dan.springframework.eventbooker.model.UserDTO;
 import dan.springframework.eventbooker.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -31,10 +32,5 @@ public class AuthController {
                 request.getPassword());
 
         return Map.of("token", token, "type", "Bearer");
-    }
-
-    @GetMapping("/my-profile")
-    public UserDTO getMyProfile(Authentication authentication) {
-        return authService.getProfile(authentication.getName());
     }
 }

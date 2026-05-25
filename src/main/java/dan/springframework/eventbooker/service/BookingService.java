@@ -18,9 +18,9 @@ public interface BookingService {
 
     boolean cancelBooking(Long bookingId, String email);
 
-    Optional<BookingDTO> updateBooking(Long bookingId,BookingDTO booking);
+    Optional<BookingDTO> updateBooking(Long bookingId,BookingDTO booking, String email );
 
-    Optional<BookingDTO> patchBooking(Long bookingId, BookingDTO booking);
+    Optional<BookingDTO> patchBooking(Long bookingId, BookingDTO booking,  String email);
 
 
 

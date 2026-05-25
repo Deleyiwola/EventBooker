@@ -6,10 +6,10 @@ import dan.springframework.eventbooker.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 
@@ -19,6 +19,7 @@ import java.util.List;
 public class UserController {
     public static final String USER_URI = "/bookingApi/v1/users";
     public static final String USER_ID_URI = "/bookingApi/v1/users/{userId}";
+    public static final String MY_PROFILE_URI = "/my-profile";
 
     private final UserService userService;
 
@@ -26,6 +27,11 @@ public class UserController {
     @GetMapping(USER_URI)
     public List<UserDTO> listUsers()     {
         return userService.listUsers();
+    }
+
+    @GetMapping(USER_URI + MY_PROFILE_URI)
+    public UserDTO getMyProfile(Authentication authentication) {
+        return userService.getProfile(authentication.getName());
     }
 
 //    Ear marked for admin role but i'll make a proflie endpoint
@@ -36,31 +42,20 @@ public class UserController {
 
         return userService.getUserById(userId);
     }
-/*
-    Not sure if i should remove this,
-     because the application can already create a new user from the AuthController */
-    @PostMapping(USER_URI)
-    public ResponseEntity<UserDTO> createNewUser(@Validated @RequestBody UserDTO userDTO) {
-
-        UserDTO savedUser = userService.createUser(userDTO);
-
-        return ResponseEntity
-                .created(URI.create(USER_URI + "/" + savedUser.getId()))
-                .body(savedUser);
-    }
 
 //Normal user but add security
-    @PutMapping(USER_ID_URI)
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @Validated @RequestBody UserDTO userDTO) {
-        return userService.updateUser(userId, userDTO)
+    @PutMapping(USER_URI+ "/update" + MY_PROFILE_URI)
+    public ResponseEntity<UserDTO> updateUser( @Validated @RequestBody UserDTO userDTO,
+                                              Authentication authentication) {
+        return userService.updateUser(userDTO, authentication.getName())
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
 //Normal user but add security
-    @PatchMapping(USER_ID_URI)
-    public ResponseEntity<UserDTO> patchUser(@PathVariable Long userId, @Validated @RequestBody UserDTO userDTO) {
-        return userService.patchUser(userId, userDTO)
+    @PatchMapping(USER_URI + "/edit" + MY_PROFILE_URI)
+    public ResponseEntity<UserDTO> patchUser(@Validated @RequestBody UserDTO userDTO, Authentication authentication) {
+        return userService.patchUser(userDTO, authentication.getName())
                 .map(ResponseEntity::ok)
 
                 .orElseThrow(() -> new NotFoundException("User not found"));
@@ -68,8 +63,8 @@ public class UserController {
 
 // Ear marked for admin role
     @DeleteMapping(USER_ID_URI)
-    public  ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+    public  ResponseEntity<Void> deleteUser(@PathVariable Long userId, Authentication authentication) {
+        userService.deleteUser(authentication.getName());
 
         return ResponseEntity.noContent().build();
     }

@@ -12,13 +12,13 @@ public interface UserService {
 
     UserDTO getUserById(Long id);
 
-    UserDTO createUser(UserDTO user);
+    Optional<UserDTO> updateUser(UserDTO user, String email);
 
-    Optional<UserDTO> updateUser(Long userId, UserDTO user);
+    boolean deleteUser(String email);
 
-    boolean deleteUser(Long id);
+    Optional<UserDTO> patchUser(UserDTO user, String email);
 
-    Optional<UserDTO> patchUser(Long userId, UserDTO user);
+    List<BookingDTO> getUserBookings(String email);
 
-    List<BookingDTO> getUserBookings(Long userId);
+    UserDTO getProfile(String email);
 }

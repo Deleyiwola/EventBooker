@@ -77,6 +77,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.bookingToBookingDTO(booking);
     }
 
+   //Only admin and event organiser roles can do this
     @Override
     public List<BookingDTO> getBookings() {
         return bookingRepository.findAll()
@@ -92,6 +93,7 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
+//    Admin and organizer role
     @Override
     public List<BookingDTO> getBookingsByEventId(Long eventId) {
         return bookingRepository.findByEvent_Id(eventId)
@@ -121,8 +123,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Optional<BookingDTO> updateBooking(Long bookingId, BookingDTO booking) {
+    public Optional<BookingDTO> updateBooking(Long bookingId, BookingDTO booking, String email) {
         return bookingRepository.findById(bookingId).map(existingBooking -> {
+
+            if (!existingBooking.getUser().getEmail().equals(email)) {
+                throw new AccessDeniedException("You are not allowed to modify this booking");
+            }
 
             int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
             existingBooking.setNumberOfSeatsBooked(requestedSeats);
@@ -136,8 +142,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Optional<BookingDTO> patchBooking(Long bookingId, BookingDTO booking) {
+    public Optional<BookingDTO> patchBooking(Long bookingId, BookingDTO booking, String email) {
         return bookingRepository.findById(bookingId).map(existingBooking -> {
+
+            if (!existingBooking.getUser().getEmail().equals(email)) {
+                throw new AccessDeniedException("You are not allowed to modify this booking");
+            }
 
             if (booking.getNumberOfSeatsBooked() != null) {
 
