@@ -31,10 +31,16 @@ public class User {
 
 //    @NotNull
 //    @NotBlank
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     @JsonIgnore
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.ROLE_USER;
 
     @Builder.Default
     @OneToMany(mappedBy = "user", orphanRemoval = true)
@@ -43,7 +49,7 @@ public class User {
 
     public void addBooking(Booking booking) {
         if (booking == null) {
-            bookings = new HashSet<>();
+            return;
         }
         bookings.add(booking);
         booking.setUser(this);
