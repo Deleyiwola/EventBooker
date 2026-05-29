@@ -17,7 +17,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final UserMapper userMapper;
 
     public String register(RegisterUser registerUser) {
         if (!registerUser.getPassword().equals(registerUser.getConfirmPassword())) {
@@ -36,7 +35,7 @@ public class AuthService {
                 .build();
         User savedUser = userRepository.save(user);
 
-        return jwtService.generateToken(savedUser.getEmail());
+        return jwtService.generateToken(savedUser.getEmail(), savedUser.getRole());
 
 
     }
@@ -48,6 +47,6 @@ public class AuthService {
         throw new RuntimeException("Invalid Credentials");
     }
 
-    return jwtService.generateToken(user.getEmail());
+    return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 }
