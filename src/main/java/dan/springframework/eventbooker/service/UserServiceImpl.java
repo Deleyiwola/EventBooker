@@ -7,8 +7,8 @@ import dan.springframework.eventbooker.mapper.UserMapper;
 import dan.springframework.eventbooker.model.BookingDTO;
 import dan.springframework.eventbooker.model.UserDTO;
 import dan.springframework.eventbooker.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -58,42 +58,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(String email) {
+    public void deleteUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-         if (!user.getEmail().equals(email)) {
-            throw new AccessDeniedException("You cannot delete this user");
-        }
+        user.getBookings().clear();
+        userRepository.delete(user);
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("User not found"));
 
         user.getBookings().clear();
         userRepository.delete(user);
-        return true;
     }
-    @Override
-    public Optional<UserDTO> patchUser(UserDTO user, String email) {
 
-        if (!user.getEmail().equals(email)) {
-            throw new AccessDeniedException("You cannot edit this user");
+    @Transactional
+    @Override
+    public UserDTO patchUser(UserDTO user, String email) {
+
+        User existingUser = userRepository.findByEmail(email)
+                .orElseThrow(()-> new NotFoundException("User not found"));
+
+        if (StringUtils.hasText(user.getName())) {
+            existingUser.setName(user.getName());
         }
 
-        AtomicReference<Optional<UserDTO>> atomicReference = new AtomicReference<>();
+        if (StringUtils.hasText(user.getPhoneNumber())) {
+            existingUser.setPhoneNumber(user.getPhoneNumber());
+        }
 
-        userRepository.findByEmail(email).ifPresentOrElse(existingUser -> {
-            if (StringUtils.hasText(user.getName())) {
-                existingUser.setName(user.getName());
-            }
-
-            if (StringUtils.hasText(user.getPhoneNumber())) {
-                existingUser.setPhoneNumber(user.getPhoneNumber());
-            }
-            atomicReference.set(Optional.of(userMapper
-                    .userToUserDTO(userRepository.save(existingUser))));
-        }, () ->{
-            atomicReference.set(Optional.empty());
-        });
-
-        return atomicReference.get();
+        return userMapper.userToUserDTO(userRepository.save(existingUser));
     }
 
     @Override

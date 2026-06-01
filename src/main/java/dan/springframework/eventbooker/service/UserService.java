@@ -14,9 +14,11 @@ public interface UserService {
 
     Optional<UserDTO> updateUser(UserDTO user, String email);
 
-    boolean deleteUser(String email);
+    void deleteUser(String email);
 
-    Optional<UserDTO> patchUser(UserDTO user, String email);
+    void deleteUserById(Long id);
+
+    UserDTO patchUser(UserDTO user, String email);
 
     List<BookingDTO> getUserBookings(String email);
 

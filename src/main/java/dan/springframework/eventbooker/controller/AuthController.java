@@ -34,4 +34,5 @@ public class AuthController {
 
         return Map.of("token", token, "type", "Bearer");
     }
+
 }
