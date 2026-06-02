@@ -12,12 +12,11 @@ import dan.springframework.eventbooker.repository.EventRepository;
 import dan.springframework.eventbooker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,14 +67,21 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDTO getBookingById(Long id, String email) {
-        Booking booking =  bookingRepository.findById(id)
+        Booking booking =  bookingRepository.findByBookingIdAndUser_Email(id, email)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
 
-        if (!booking.getUser().getEmail().equals(email)) {
-            throw new AccessDeniedException("User not allowed to veiw this booking");
-        }
         return bookingMapper.bookingToBookingDTO(booking);
     }
+
+    @Override
+    public List<BookingDTO> getBookingsByUserEmail(String email) {
+        return bookingRepository.findByUser_Email(email)
+                .stream()
+                .map(bookingMapper::bookingToBookingDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
    //Only admin and event organiser roles can do this
     @Override
@@ -86,12 +92,7 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-    public List<BookingDTO> getBookingsByUserEmail(String email) {
-        return bookingRepository.findByUser_Email(email)
-                .stream()
-                .map(bookingMapper::bookingToBookingDTO)
-                .collect(Collectors.toList());
-    }
+
 
 //    Admin and organizer role
     @Override
@@ -106,12 +107,8 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public boolean cancelBooking(Long bookingId, String email) {
 
-        Booking booking = bookingRepository.findById(bookingId)
+        Booking booking = bookingRepository.findByBookingIdAndUser_Email(bookingId, email)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
-
-        if (!booking.getUser().getEmail().equals(email)) {
-            throw new AccessDeniedException("You are not allowed to make changes to this booking");
-        }
 
         booking.getUser().removeBooking(booking);
         booking.getEvent().removeBooking(booking);
@@ -123,46 +120,41 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Optional<BookingDTO> updateBooking(Long bookingId, BookingDTO booking, String email) {
-        return bookingRepository.findById(bookingId).map(existingBooking -> {
+    public BookingDTO updateBooking(Long bookingId, BookingDTO booking, String email) {
 
-            if (!existingBooking.getUser().getEmail().equals(email)) {
-                throw new AccessDeniedException("You are not allowed to modify this booking");
-            }
+        Booking existingBooking= bookingRepository.findByBookingIdAndUser_Email(bookingId, email)
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
 
-            int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
-            existingBooking.setNumberOfSeatsBooked(requestedSeats);
-            existingBooking.setLastUpdatedTime(LocalDateTime.now());
+        int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
+        existingBooking.setNumberOfSeatsBooked(requestedSeats);
+        existingBooking.setLastUpdatedTime(LocalDateTime.now());
 
-            Booking updatedBooking = bookingRepository.save(existingBooking);
-            return bookingMapper.bookingToBookingDTO(updatedBooking);
-        });
+        Booking updatedBooking = bookingRepository.save(existingBooking);
+        return bookingMapper.bookingToBookingDTO(updatedBooking);
+
     }
 
 
     @Override
     @Transactional
-    public Optional<BookingDTO> patchBooking(Long bookingId, BookingDTO booking, String email) {
-        return bookingRepository.findById(bookingId).map(existingBooking -> {
+    public BookingDTO patchBooking(Long bookingId, BookingDTO booking, String email) {
+        Booking existingBooking = bookingRepository.findByBookingIdAndUser_Email(bookingId, email)
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
 
-            if (!existingBooking.getUser().getEmail().equals(email)) {
-                throw new AccessDeniedException("You are not allowed to modify this booking");
-            }
+        if (booking.getNumberOfSeatsBooked() != null) {
 
-            if (booking.getNumberOfSeatsBooked() != null) {
+            int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
 
-                int requestedSeats = validateAndGetRequestedSeats(booking, existingBooking);
+            existingBooking.setNumberOfSeatsBooked(requestedSeats);
+        }
 
-                existingBooking.setNumberOfSeatsBooked(requestedSeats);
-            }
+        existingBooking.setLastUpdatedTime(LocalDateTime.now());
 
-            existingBooking.setLastUpdatedTime(LocalDateTime.now());
+        Booking updatedBooking = bookingRepository.save(existingBooking);
 
-            Booking updatedBooking = bookingRepository.save(existingBooking);
-
-            return bookingMapper.bookingToBookingDTO(updatedBooking);
-        });
+        return bookingMapper.bookingToBookingDTO(updatedBooking);
     }
+
     private int validateAndGetRequestedSeats(BookingDTO booking, Booking existingBooking) {
 
         int requestedSeats = booking.getNumberOfSeatsBooked();

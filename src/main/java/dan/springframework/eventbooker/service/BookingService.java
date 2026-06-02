@@ -3,7 +3,6 @@ package dan.springframework.eventbooker.service;
 import dan.springframework.eventbooker.model.BookingDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookingService {
     BookingDTO createBooking(CreateBookingRequest request, String email);
@@ -18,9 +17,9 @@ public interface BookingService {
 
     boolean cancelBooking(Long bookingId, String email);
 
-    Optional<BookingDTO> updateBooking(Long bookingId,BookingDTO booking, String email );
+    BookingDTO updateBooking(Long bookingId,BookingDTO booking, String email );
 
-    Optional<BookingDTO> patchBooking(Long bookingId, BookingDTO booking,  String email);
+    BookingDTO patchBooking(Long bookingId, BookingDTO booking,  String email);
 
 
 

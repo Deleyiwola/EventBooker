@@ -1,12 +1,12 @@
 package dan.springframework.eventbooker.controller;
 
-import dan.springframework.eventbooker.exception.NotFoundException;
 import dan.springframework.eventbooker.model.BookingDTO;
 import dan.springframework.eventbooker.service.BookingService;
 import dan.springframework.eventbooker.service.CreateBookingRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +17,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@PreAuthorize("hasRole('USER')")
 public class BookingController {
     public static final String BOOKING_URI = "/bookingApi/v1/bookings";
     public static final String BOOKING_ID_URI = "/bookingApi/v1/bookings/{bookingId}";
@@ -25,10 +26,12 @@ public class BookingController {
 
     private final BookingService bookingService;
 
+    @PreAuthorize("hasRole('ORGANIZER')")
     @GetMapping(BOOKING_URI)
     public List<BookingDTO> listBookings() {
         return bookingService.getBookings();
     }
+
 
     @GetMapping(BOOKING_ID_URI)
     public BookingDTO getBookingById(@PathVariable Long bookingId, Authentication authentication) {
@@ -39,11 +42,12 @@ public class BookingController {
     }
 
     @GetMapping(BOOKING_MY_BOOKING_URI)
-    public List<BookingDTO> getBookingsByUserEmail(Authentication authentication) {
+    public List<BookingDTO> getMyBookingsByUserEmail(Authentication authentication) {
         log.info("Getting booking with user {}",  authentication.getName());
         return bookingService.getBookingsByUserEmail(authentication.getName());
     }
 
+    @PreAuthorize("hasRole('ORGANIZER')")
     @GetMapping(BOOKING_EVENT_ID_URI)
     public List<BookingDTO> getBookingsByEventId(@PathVariable Long eventId) {
         log.info("Getting booking with eventId {}", eventId);
@@ -64,17 +68,13 @@ public class BookingController {
     @PutMapping(BOOKING_ID_URI)
     public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO,
                                                     Authentication authentication) {
-        return bookingService.updateBooking(bookingId, bookingDTO, authentication.getName())
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new NotFoundException("Booking not found"));
+        return ResponseEntity.ok(bookingService.updateBooking(bookingId, bookingDTO, authentication.getName()));
     }
 
     @PatchMapping(BOOKING_ID_URI)
     public ResponseEntity<BookingDTO> patchBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO,
                                                    Authentication authentication) {
-        return bookingService.patchBooking(bookingId, bookingDTO, authentication.getName())
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new NotFoundException("Booking not found"));
+        return ResponseEntity.ok(bookingService.patchBooking(bookingId, bookingDTO, authentication.getName()));
     }
 
     @DeleteMapping(BOOKING_ID_URI)
