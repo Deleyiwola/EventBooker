@@ -6,6 +6,7 @@ import dan.springframework.eventbooker.service.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +22,13 @@ public class EventController {
 
     private final EventService eventService;
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping(EVENT_URI)
     public List<EventDTO> listEvents() {
         return eventService.listEvents();
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping(EVENT_ID_URI)
     public EventDTO getEventById(@PathVariable Long eventId) {
 
@@ -34,6 +37,7 @@ public class EventController {
         return eventService.getEventById(eventId);
     }
 
+    @PreAuthorize("hasRole('ORGANIZER')")
     @PostMapping(EVENT_URI)
     public ResponseEntity<EventDTO> createNewEvent(@Validated @RequestBody EventDTO eventDTO) {
 
@@ -44,6 +48,7 @@ public class EventController {
                 .body(savedEvent);
     }
 
+    @PreAuthorize("hasRole('ORGANIZER')")
     @PutMapping(EVENT_ID_URI)
     public ResponseEntity<EventDTO> updateEvent(@PathVariable Long eventId, @Validated @RequestBody EventDTO eventDTO) {
         return eventService.updateEvent(eventId, eventDTO)
@@ -51,6 +56,7 @@ public class EventController {
                 .orElseThrow(() -> new NotFoundException("Event not found"));
     }
 
+    @PreAuthorize("hasRole('ORGANIZER')")
     @PatchMapping(EVENT_ID_URI)
     public ResponseEntity<EventDTO> patchEvent(@PathVariable Long eventId, @Validated @RequestBody EventDTO eventDTO) {
         return eventService.patchEvent(eventId, eventDTO)
@@ -58,6 +64,7 @@ public class EventController {
                 .orElseThrow(() -> new NotFoundException("Event not found"));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(EVENT_ID_URI)
     public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
         eventService.deleteEvent(eventId);
