@@ -31,6 +31,7 @@ public class UserController {
         return userService.listUsers();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(USER_URI + MY_PROFILE_URI)
     public UserDTO getMyProfile(Authentication authentication) {
         return userService.getProfile(authentication.getName());
@@ -46,6 +47,7 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping(USER_URI+MY_PROFILE_URI)
     public ResponseEntity<UserDTO> updateUser( @Validated @RequestBody UserDTO userDTO,
                                                Authentication authentication) {
@@ -54,6 +56,7 @@ public class UserController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping(USER_URI+MY_PROFILE_URI)
     public ResponseEntity<UserDTO> patchUser(@Validated @RequestBody UserDTO userDTO,
                                              Authentication authentication) {
@@ -70,6 +73,7 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping(USER_URI+MY_PROFILE_URI)
     public  ResponseEntity<Void> deleteUser(Authentication authentication) {
         userService.deleteUser(authentication.getName());
