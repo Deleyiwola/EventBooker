@@ -1,5 +1,6 @@
 package dan.springframework.eventbooker.controller;
 
+import dan.springframework.eventbooker.entity.User;
 import dan.springframework.eventbooker.exception.NotFoundException;
 import dan.springframework.eventbooker.model.UserDTO;
 import dan.springframework.eventbooker.service.UserService;
@@ -34,7 +35,8 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping(USER_URI + MY_PROFILE_URI)
     public UserDTO getMyProfile(Authentication authentication) {
-        return userService.getProfile(authentication.getName());
+        log.debug("===>>> {}", ((User)authentication.getPrincipal()).getEmail());
+        return userService.getProfile(((User)authentication.getPrincipal()).getEmail());
     }
 
     //    Ear marked for admin role but i'll make a proflie endpoint
@@ -51,7 +53,7 @@ public class UserController {
     @PutMapping(USER_URI+MY_PROFILE_URI)
     public ResponseEntity<UserDTO> updateUser( @Validated @RequestBody UserDTO userDTO,
                                                Authentication authentication) {
-        return userService.updateUser(userDTO, authentication.getName())
+        return userService.updateUser(userDTO, ((User)authentication.getPrincipal()).getEmail())
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
@@ -60,7 +62,7 @@ public class UserController {
     @PatchMapping(USER_URI+MY_PROFILE_URI)
     public ResponseEntity<UserDTO> patchUser(@Validated @RequestBody UserDTO userDTO,
                                              Authentication authentication) {
-        return ResponseEntity.ok( userService.patchUser(userDTO, authentication.getName()));
+        return ResponseEntity.ok( userService.patchUser(userDTO, ((User)authentication.getPrincipal()).getEmail()));
     }
 
     // Ear marked for admin role
@@ -76,7 +78,7 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping(USER_URI+MY_PROFILE_URI)
     public  ResponseEntity<Void> deleteUser(Authentication authentication) {
-        userService.deleteUser(authentication.getName());
+        userService.deleteUser(((User)authentication.getPrincipal()).getEmail());
 
         return ResponseEntity.noContent().build();
     }

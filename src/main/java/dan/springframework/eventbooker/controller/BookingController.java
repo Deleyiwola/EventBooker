@@ -1,5 +1,6 @@
 package dan.springframework.eventbooker.controller;
 
+import dan.springframework.eventbooker.entity.User;
 import dan.springframework.eventbooker.model.BookingDTO;
 import dan.springframework.eventbooker.service.BookingService;
 import dan.springframework.eventbooker.service.CreateBookingRequest;
@@ -38,13 +39,13 @@ public class BookingController {
 
         log.info("Getting booking with id {}", bookingId);
 
-        return bookingService.getBookingById(bookingId, authentication.getName());
+        return bookingService.getBookingById(bookingId, ((User)authentication.getPrincipal()).getEmail());
     }
 
     @GetMapping(BOOKING_MY_BOOKING_URI)
     public List<BookingDTO> getMyBookingsByUserEmail(Authentication authentication) {
-        log.info("Getting booking with user {}",  authentication.getName());
-        return bookingService.getBookingsByUserEmail(authentication.getName());
+        log.info("Getting booking with user {}", ((User)authentication.getPrincipal()).getEmail());
+        return bookingService.getBookingsByUserEmail(((User)authentication.getPrincipal()).getEmail());
     }
 
     @PreAuthorize("hasRole('ORGANIZER')")
@@ -58,7 +59,7 @@ public class BookingController {
     public ResponseEntity<BookingDTO> createNewBooking( @Validated @RequestBody CreateBookingRequest bookingRequest,
                                                         Authentication authentication) {
 
-        BookingDTO savedBooking = bookingService.createBooking(bookingRequest, authentication.getName());
+        BookingDTO savedBooking = bookingService.createBooking(bookingRequest, ((User)authentication.getPrincipal()).getEmail());
 
         return ResponseEntity
                 .created(URI.create(BOOKING_URI + "/" + savedBooking.getBookingId()))
@@ -68,18 +69,18 @@ public class BookingController {
     @PutMapping(BOOKING_ID_URI)
     public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO,
                                                     Authentication authentication) {
-        return ResponseEntity.ok(bookingService.updateBooking(bookingId, bookingDTO, authentication.getName()));
+        return ResponseEntity.ok(bookingService.updateBooking(bookingId, bookingDTO, ((User)authentication.getPrincipal()).getEmail()));
     }
 
     @PatchMapping(BOOKING_ID_URI)
     public ResponseEntity<BookingDTO> patchBooking(@PathVariable Long bookingId, @Validated @RequestBody BookingDTO bookingDTO,
                                                    Authentication authentication) {
-        return ResponseEntity.ok(bookingService.patchBooking(bookingId, bookingDTO, authentication.getName()));
+        return ResponseEntity.ok(bookingService.patchBooking(bookingId, bookingDTO, ((User)authentication.getPrincipal()).getEmail()));
     }
 
     @DeleteMapping(BOOKING_ID_URI)
     public ResponseEntity<Void> deleteBooking(@PathVariable Long bookingId, Authentication authentication) {
-        bookingService.cancelBooking(bookingId, authentication.getName());
+        bookingService.cancelBooking(bookingId, ((User)authentication.getPrincipal()).getEmail());
         return ResponseEntity.noContent().build();
     }
 }
