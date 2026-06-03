@@ -1,8 +1,8 @@
 package dan.springframework.eventbooker.service;
 
+import dan.springframework.eventbooker.entity.Role;
 import dan.springframework.eventbooker.entity.User;
 import dan.springframework.eventbooker.exception.NotFoundException;
-import dan.springframework.eventbooker.mapper.UserMapper;
 import dan.springframework.eventbooker.model.RegisterUser;
 import dan.springframework.eventbooker.repository.UserRepository;
 import dan.springframework.eventbooker.security.JwtService;
@@ -32,6 +32,7 @@ public class AuthService {
                 .email(registerUser.getEmail())
                 .phoneNumber(registerUser.getPhoneNumber())
                 .password(passwordEncoder.encode(registerUser.getPassword()))
+                .role(Role.ROLE_USER)
                 .build();
         User savedUser = userRepository.save(user);
 
