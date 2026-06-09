@@ -16,7 +16,6 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/bookingApi/v1/organizer-requests")
 @RequiredArgsConstructor
 public class OrganizerRequestController {
     public static final String ADMIN_ENDPOINT = "/bookingApi/v1/admin/organizer-requests";
