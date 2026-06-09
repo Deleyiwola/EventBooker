@@ -7,12 +7,12 @@ import dan.springframework.eventbooker.exception.BookingException;
 import dan.springframework.eventbooker.exception.NotFoundException;
 import dan.springframework.eventbooker.mapper.BookingMapper;
 import dan.springframework.eventbooker.model.BookingDTO;
+import dan.springframework.eventbooker.model.CreateBookingRequest;
 import dan.springframework.eventbooker.repository.BookingRepository;
 import dan.springframework.eventbooker.repository.EventRepository;
 import dan.springframework.eventbooker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

@@ -1,6 +1,7 @@
 package dan.springframework.eventbooker.service;
 
 import dan.springframework.eventbooker.model.BookingDTO;
+import dan.springframework.eventbooker.model.CreateBookingRequest;
 
 import java.util.List;
 
