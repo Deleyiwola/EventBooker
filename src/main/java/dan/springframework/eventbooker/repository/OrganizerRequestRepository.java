@@ -15,6 +15,5 @@ public interface OrganizerRequestRepository extends JpaRepository<OrganizerReque
 
     boolean existsByUserId(Long userId);
 
-    boolean existsByUserIdAndStatus(Long userId, RequestStatus status);
 }
 

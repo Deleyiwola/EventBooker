@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@Table(name = "organizer_request")
+@Table(name = "organizer_request")
 public class OrganizerRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
