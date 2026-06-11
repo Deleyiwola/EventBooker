@@ -4,7 +4,7 @@ import dan.springframework.eventbooker.entity.OrganizerRequest;
 import dan.springframework.eventbooker.entity.RequestStatus;
 import dan.springframework.eventbooker.entity.Role;
 import dan.springframework.eventbooker.entity.User;
-import dan.springframework.eventbooker.exception.NotFoundException;
+import dan.springframework.eventbooker.exception.*;
 import dan.springframework.eventbooker.mapper.OrganizerRequestMapper;
 import dan.springframework.eventbooker.model.CreateOrganizerRequest;
 import dan.springframework.eventbooker.model.OrganizerRequestDTO;
@@ -38,11 +38,13 @@ public class OrganizerRequestServiceImpl implements OrganizerRequestService {
                         new NotFoundException("User not found"));
 
         if (user.getRole()== Role.ROLE_ADMIN||user.getRole()== Role.ROLE_ORGANIZER) {
-            throw new RuntimeException("You are already an Organizer");
+            throw new UserAlreadyOrganizer("You are already an Organizer");
         }
 
         if (organizerRequestRepository.existsByUserId(user.getId())) {
-            throw new RuntimeException("You have already submitted an organizer request");
+            throw new OrganizerRequestAlreadyExistsException(
+                    "You have already submitted an organizer request"
+            );
         }
 
         OrganizerRequest organizerRequest =
@@ -64,7 +66,7 @@ public class OrganizerRequestServiceImpl implements OrganizerRequestService {
 
         if (status.status() != RequestStatus.APPROVED
         && status.status() != RequestStatus.REJECTED) {
-            throw new RuntimeException("Status must be APPROVED or REJECTED");
+            throw new InvalidStatusException("Status must be APPROVED or REJECTED");
         }
 
         OrganizerRequest request =
@@ -72,7 +74,7 @@ public class OrganizerRequestServiceImpl implements OrganizerRequestService {
                         .orElseThrow(() -> new NotFoundException("Request not found"));
 
         if (request.getStatus() != RequestStatus.PENDING) {
-            throw new RuntimeException("Request has already been processed");
+            throw new ProcessedRequestException("Request has already been processed");
         }
 
 

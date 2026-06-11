@@ -2,7 +2,9 @@ package dan.springframework.eventbooker.service;
 
 import dan.springframework.eventbooker.entity.Role;
 import dan.springframework.eventbooker.entity.User;
-import dan.springframework.eventbooker.exception.NotFoundException;
+import dan.springframework.eventbooker.exception.ExistingUserException;
+import dan.springframework.eventbooker.exception.InvalidCredentialsException;
+import dan.springframework.eventbooker.exception.PasswordMismatchException;
 import dan.springframework.eventbooker.model.RegisterUser;
 import dan.springframework.eventbooker.repository.UserRepository;
 import dan.springframework.eventbooker.security.JwtService;
@@ -20,11 +22,11 @@ public class AuthService {
 
     public String register(RegisterUser registerUser) {
         if (!registerUser.getPassword().equals(registerUser.getConfirmPassword())) {
-            throw new RuntimeException("The passwords don't match");
+            throw new PasswordMismatchException("The passwords don't match");
         }
 
         if (userRepository.findByEmail(registerUser.getEmail()).isPresent()) {
-            throw new RuntimeException("User with this email already exists");
+            throw new ExistingUserException("User with this email already exists");
         }
 
         User user = User.builder()
@@ -37,17 +39,14 @@ public class AuthService {
         User savedUser = userRepository.save(user);
 
         return jwtService.generateToken(savedUser.getEmail(), savedUser.getRole());
-
-
     }
 
     public String login(String email, String password) {
     User user = userRepository.findByEmail(email)
-            .orElseThrow(()-> new NotFoundException("User not found"));
+            .orElseThrow(()-> new InvalidCredentialsException("Invalid Email"));
     if (!passwordEncoder.matches(password, user.getPassword())) {
-        throw new RuntimeException("Invalid Credentials");
+        throw new InvalidCredentialsException("Invalid Password");
     }
-
     return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 }

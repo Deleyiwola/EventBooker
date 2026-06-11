@@ -1,6 +1,7 @@
 package dan.springframework.eventbooker.service;
 
 import dan.springframework.eventbooker.entity.Event;
+import dan.springframework.eventbooker.exception.EventCapacityException;
 import dan.springframework.eventbooker.exception.NotFoundException;
 import dan.springframework.eventbooker.mapper.BookingMapper;
 import dan.springframework.eventbooker.mapper.EventMapper;
@@ -47,7 +48,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventMapper.eventDTOToEvent(eventDTO);
         Event savedEvent = eventRepository.save(event);
         if (savedEvent.getCapacity()==null) {
-            throw new RuntimeException("Capacity Must not be null");
+            throw new EventCapacityException("Capacity Must not be null");
         }
         return eventMapper.eventToEventDTO(savedEvent);
     }
