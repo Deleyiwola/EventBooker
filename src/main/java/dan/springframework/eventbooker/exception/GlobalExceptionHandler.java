@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
             OrganizerRequestAlreadyExistsException ex, HttpServletRequest request){
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.CONFLICT.value(),
                 "Duplicate Request ERROR",
                 ex.getMessage(),
                 request.getRequestURI()
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
             ExistingUserException ex, HttpServletRequest request){
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.CONFLICT.value(),
                 "Existing User ERROR",
                 ex.getMessage(),
                 request.getRequestURI()
