@@ -38,7 +38,7 @@ public class OrganizerRequestServiceImpl implements OrganizerRequestService {
                         new NotFoundException("User not found"));
 
         if (user.getRole()== Role.ROLE_ADMIN||user.getRole()== Role.ROLE_ORGANIZER) {
-            throw new UserAlreadyOrganizer("You are already an Organizer");
+            throw new UserAlreadyOrganizerException("You are already an Organizer");
         }
 
         if (organizerRequestRepository.existsByUserId(user.getId())) {
