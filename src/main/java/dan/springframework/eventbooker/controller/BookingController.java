@@ -27,7 +27,7 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(BOOKING_URI)
     public List<BookingDTO> listBookings() {
         return bookingService.getBookings();
