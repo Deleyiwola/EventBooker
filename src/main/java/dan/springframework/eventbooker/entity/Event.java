@@ -27,7 +27,6 @@ public class Event {
 //    @NotBlank
 //    @Size(max = 50)
     private String eventName;
-
     private Integer capacity;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
