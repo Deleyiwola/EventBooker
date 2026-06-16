@@ -27,7 +27,7 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(BOOKING_URI)
     public List<BookingDTO> listBookings() {
         return bookingService.getBookings();
@@ -50,9 +50,9 @@ public class BookingController {
 
     @PreAuthorize("hasRole('ORGANIZER')")
     @GetMapping(BOOKING_EVENT_ID_URI)
-    public List<BookingDTO> getBookingsByEventId(@PathVariable Long eventId) {
+    public List<BookingDTO> getBookingsByEventId(@PathVariable Long eventId, Authentication authentication) {
         log.info("Getting booking with eventId {}", eventId);
-        return bookingService.getBookingsByEventId(eventId);
+        return bookingService.getBookingsByEventId(eventId, ((User)authentication.getPrincipal()).getEmail() );
     }
 
     @PostMapping(BOOKING_URI)
