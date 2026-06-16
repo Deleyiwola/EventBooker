@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByUser_Email(String email);
-    List<Booking> findByEvent_Id(Long eventId);
+    List<Booking> findByEventIdAndUser_Email(Long eventId, String email);
     Optional<Booking> findByBookingIdAndUser_Email(Long bookingId, String email);
 }

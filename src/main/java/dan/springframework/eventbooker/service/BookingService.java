@@ -14,7 +14,7 @@ public interface BookingService {
 
     List<BookingDTO> getBookingsByUserEmail(String email);
 
-    List<BookingDTO> getBookingsByEventId(Long eventId);
+    List<BookingDTO> getBookingsByEventId(Long eventId, String email);
 
     boolean cancelBooking(Long bookingId, String email);
 
