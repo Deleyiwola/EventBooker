@@ -96,8 +96,8 @@ public class BookingServiceImpl implements BookingService {
 
 //    Admin and organizer role
     @Override
-    public List<BookingDTO> getBookingsByEventId(Long eventId) {
-        return bookingRepository.findByEvent_Id(eventId)
+    public List<BookingDTO> getBookingsByEventId(Long eventId,String email) {
+        return bookingRepository.findByEventIdAndUser_Email(eventId,email)
                 .stream()
                 .map(bookingMapper::bookingToBookingDTO)
                 .collect(Collectors.toList());

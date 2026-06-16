@@ -217,7 +217,7 @@ class BookingControllerTest {
                 .eventId(20L)
                 .build();
 
-        when(bookingService.getBookingsByEventId(eq(20L)))
+        when(bookingService.getBookingsByEventId(eq(20L), ))
                 .thenReturn(List.of(bookingDTO));
 
         mockMvc.perform(get("bookingApi/v1/bookings/events/20")
@@ -231,8 +231,8 @@ class BookingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.eventId").value(20));
 
-        verify(bookingService).getBookingsByEventId(eq(20L));
+        verify(bookingService).getBookingsByEventId(eq(20L), );
     }
 
-    
+
 }
