@@ -25,7 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(BookingController.class)
 class BookingControllerTest {
 
@@ -38,11 +37,26 @@ class BookingControllerTest {
     @MockitoBean
     private BookingService bookingService;
 
-    private UsernamePasswordAuthenticationToken authToken(User user) {
+    private UsernamePasswordAuthenticationToken userToken(User user) {
         return new UsernamePasswordAuthenticationToken(
                 user,
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+    }
+    private UsernamePasswordAuthenticationToken organiserToken(User user){
+        return new UsernamePasswordAuthenticationToken(
+                user,
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
+        );
+
+    }
+    private UsernamePasswordAuthenticationToken adminToken(User user){
+        return new UsernamePasswordAuthenticationToken(
+                user,
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
     }
 
@@ -64,7 +78,7 @@ class BookingControllerTest {
 
         mockMvc.perform(
                 get("/bookingApi/v1/bookings/1")
-                        .principal(authToken(user))
+                        .principal(userToken(user))
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bookingId").value(1));
@@ -87,7 +101,7 @@ class BookingControllerTest {
 
         mockMvc.perform(
                 get("/bookingApi/v1/bookings/my-bookings")
-                        .principal(authToken(user))
+                        .principal(userToken(user))
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].bookingId").value(1));
@@ -117,7 +131,7 @@ class BookingControllerTest {
                 .thenReturn(bookingDTO);
 
         mockMvc.perform(post("/bookingApi/v1/bookings")
-                .principal(authToken(user))
+                .principal(userToken(user))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -150,7 +164,7 @@ class BookingControllerTest {
                 .thenReturn(updateBooking);
 
         mockMvc.perform(put("/bookingApi/v1/bookings/1")
-                .principal(authToken(user))
+                .principal(userToken(user))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(savedBooking)))
                 .andExpect(status().isOk())
@@ -179,7 +193,7 @@ class BookingControllerTest {
                 .thenReturn(updateBooking);
 
         mockMvc.perform(patch("/bookingApi/v1/bookings/1")
-                .principal(authToken(user))
+                .principal(userToken(user))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(savedBooking)))
                 .andExpect(status().isOk())
@@ -199,7 +213,7 @@ class BookingControllerTest {
                 .cancelBooking(eq(1L),"user@test.com");
 
         mockMvc.perform(delete("/bookingApi/v1/bookings/1")
-                .principal(authToken(user)))
+                .principal(userToken(user)))
                 .andExpect(status().isNoContent());
 
         verify(bookingService).cancelBooking(eq(1L),"user@test.com");
@@ -220,19 +234,39 @@ class BookingControllerTest {
         when(bookingService.getBookingsByEventId(eq(20L), "organizer@test.com"))
                 .thenReturn(List.of(bookingDTO));
 
-        mockMvc.perform(get("bookingApi/v1/bookings/events/20")
-                .principal(
-                        new UsernamePasswordAuthenticationToken(
-                                user,
-                                null,
-                                List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
-                        )
-                ))
+        mockMvc.perform(get("/bookingApi/v1/bookings/events/20")
+                .principal(organiserToken(user))
+                )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventId").value(20));
+                .andExpect(jsonPath("$[0].eventId").value(20));
 
         verify(bookingService).getBookingsByEventId(eq(20L), "organizer@test.com");
     }
 
+    @Test
+    void listBookings() throws Exception {
+
+
+        User user = User.builder()
+                .email("admin@test.com")
+                .role(Role.ROLE_ADMIN)
+                .build();
+
+        BookingDTO bookingDTO = new BookingDTO();
+        bookingDTO.setBookingId(1L);
+
+        when(bookingService.getBookings())
+                .thenReturn(List.of(bookingDTO));
+
+        mockMvc.perform(
+                get("/bookingApi/v1/bookings")
+                        .principal(adminToken(user))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].bookingId").value(1L));
+
+        verify(bookingService).getBookings();
+
+    }
 
 }
