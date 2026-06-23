@@ -81,9 +81,6 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-
-
-   //Only admin and event organiser roles can do this
     @Override
     public List<BookingDTO> getBookings() {
         return bookingRepository.findAll()
@@ -92,9 +89,6 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-
-
-//    Admin and organizer role
     @Override
     public List<BookingDTO> getBookingsByEventId(Long eventId,String email) {
         return bookingRepository.findByEventIdAndUser_Email(eventId,email)

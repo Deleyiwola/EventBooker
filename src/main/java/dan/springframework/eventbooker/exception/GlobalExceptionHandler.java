@@ -3,6 +3,7 @@ package dan.springframework.eventbooker.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -14,7 +15,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex,
                                                         HttpServletRequest request) {
-
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
@@ -28,7 +28,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BookingException.class)
     public ResponseEntity<ErrorResponse> handleBooking(BookingException ex,
                                                        HttpServletRequest request) {
-
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -54,7 +53,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OrganizerRequestAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleOrganizerRequestAlreadyExists(
-            OrganizerRequestAlreadyExistsException ex, HttpServletRequest request){
+            OrganizerRequestAlreadyExistsException ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.CONFLICT.value(),
@@ -67,7 +66,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyOrganizerException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyOrganizer(
-            UserAlreadyOrganizerException ex, HttpServletRequest request){
+            UserAlreadyOrganizerException ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -80,7 +79,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidStatusException.class)
     public ResponseEntity<ErrorResponse> handleInvalidStatus(
-            InvalidStatusException ex, HttpServletRequest request){
+            InvalidStatusException ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -93,7 +92,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProcessedRequestException.class)
     public ResponseEntity<ErrorResponse> handleProcessedRequest(
-            ProcessedRequestException ex, HttpServletRequest request){
+            ProcessedRequestException ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -106,7 +105,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PasswordMismatchException.class)
     public ResponseEntity<ErrorResponse> handlePasswordMismatch(
-            PasswordMismatchException ex, HttpServletRequest request){
+            PasswordMismatchException ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -119,7 +118,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ExistingUserException.class)
     public ResponseEntity<ErrorResponse> handleExistingUser(
-            ExistingUserException ex, HttpServletRequest request){
+            ExistingUserException ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.CONFLICT.value(),
@@ -132,7 +131,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(
-            InvalidCredentialsException ex, HttpServletRequest request){
+            InvalidCredentialsException ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.UNAUTHORIZED.value(),
@@ -143,8 +142,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AuthorizationDeniedException ex, HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Access Denied",
+                "You do not have permission to access this resource",
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception ex, HttpServletRequest request){
+    public ResponseEntity<ErrorResponse> handleException(Exception ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -154,18 +166,4 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
