@@ -2,6 +2,7 @@ package dan.springframework.eventbooker.controller;
 
 import dan.springframework.eventbooker.config.CustomUserDetailService;
 import dan.springframework.eventbooker.exception.ExistingUserException;
+import dan.springframework.eventbooker.exception.InvalidCredentialsException;
 import dan.springframework.eventbooker.exception.PasswordMismatchException;
 import dan.springframework.eventbooker.model.LoginRequest;
 import dan.springframework.eventbooker.model.RegisterUser;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.json.JsonMapper;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -118,4 +120,74 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.error").value("Validation Error"));
     }
 
+    @Test
+    void register_PasswordTooShort() throws Exception {
+        RegisterUser invalid = new RegisterUser();
+        invalid.setPassword("short");
+        invalid.setConfirmPassword("short");
+
+        mockMvc.perform(post("/bookingApi/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(invalid)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void login() throws Exception {
+        when(authService.login(eq("john@test.com"),eq("password")))
+                .thenReturn("mocked-jwt-token");
+
+        mockMvc.perform(post("/bookingApi/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(validLoginRequest())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("mocked-jwt-token"))
+                .andExpect(jsonPath("$.type").value("Bearer"));
+
+        verify(authService).login(eq("john@test.com"),eq("password"));
+    }
+
+    @Test
+    void login_invalidEmail() throws Exception {
+        when(authService.login(any(),any()))
+                .thenThrow(new InvalidCredentialsException("Invalid Email"));
+
+        mockMvc.perform(post("/bookingApi/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(validLoginRequest())))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.error").value("Invalid Credentials"))
+                .andExpect(jsonPath("$.message").value("Invalid Email"));
+
+        verify(authService).login(any(),any());
+    }
+
+    @Test
+    void login_invalidPassword() throws Exception {
+        when(authService.login(any(),any()))
+                .thenThrow(new InvalidCredentialsException("Invalid Password"));
+
+        mockMvc.perform(post("/bookingApi/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(validLoginRequest())))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.error").value("Invalid Credentials"))
+                .andExpect(jsonPath("$.message").value("Invalid Password"));
+
+        verify(authService).login(any(),any());
+    }
+
+    @Test
+    void login_missingFields() throws Exception {
+        LoginRequest invalid = new LoginRequest();
+
+        mockMvc.perform(post("/bookingApi/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(invalid)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Validation Error"));
+    }
 }
