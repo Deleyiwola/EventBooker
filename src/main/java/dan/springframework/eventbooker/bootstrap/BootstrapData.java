@@ -9,6 +9,7 @@ import dan.springframework.eventbooker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Transactional
+@Profile("dev")
 public class BootstrapData implements CommandLineRunner {
 
     private final UserRepository userRepository;
